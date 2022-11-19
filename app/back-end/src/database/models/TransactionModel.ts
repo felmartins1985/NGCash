@@ -1,55 +1,56 @@
-import { Model, INTEGER, DATE } from 'sequelize';
+import { Model, INTEGER, DATE, DECIMAL } from 'sequelize';
 import db from '.';
 
 class Transaction extends Model {
   id!: number;
   debitedAccountId!: number;
-  creditedAccountId!:number;
+  creditedAccountId!: number;
   value!: number;
-  createdAt!: Date;
+  createdAt!: string;
 }
 
-Transaction.init({
-  id: {
-    type: INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false,
-  },
-  debitedAccountId: {
-    type: INTEGER,
-    allowNull: false,
-    references: {
-      model: 'accounts',
-      key: 'id',
+Transaction.init(
+  {
+    id: {
+      type: INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  },
-  creditedAccountId: {
-    type: INTEGER,
-    allowNull: false,
-    references: {
-      model: 'accounts',
-      key: 'id',
+    debitedAccountId: {
+      type: INTEGER,
+      allowNull: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: 'accounts',
+        key: 'id',
+      },
     },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
+    creditedAccountId: {
+      type: INTEGER,
+      allowNull: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: 'accounts',
+        key: 'id',
+      },
+    },
+    value: {
+      type: DECIMAL,
+      allowNull: false,
+    },
+    createdAt: {
+      type: DATE,
+      allowNull: false,
+    },
   },
-  createdAt: {
-    type: DATE,
-    allowNull: false,
-  }
-  }, {
-  sequelize: db,
-  modelName: 'transactions',
-});
-
-/**
-  * `Workaround` para aplicar as associations em TS:
-  * Associations 1:N devem ficar em uma das instâncias de modelo
-  * */
-
-
+  {
+    sequelize: db,
+    modelName: 'transactions',
+    updatedAt: false,
+  },
+);
 
 export default Transaction;

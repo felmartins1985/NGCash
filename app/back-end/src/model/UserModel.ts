@@ -1,20 +1,30 @@
 import User from '../database/models/UserModel';
 import { IUser } from '../interfaces/IUser';
-export default class UserModel {
+
+interface IUserModel {
+  findOne(username: string): Promise<IUser | null>;
+
+}
+export default class UserModel implements IUserModel {
   protected _user: User;
 
-  public async findOne(username:string): Promise<IUser | null> {
+  findOne = async (username:string): Promise<IUser | null> => {
     const user = await User.findOne({ where: { username } });
     return user;
-  }
+  };
 
-  public async findAll(): Promise<IUser[]> {
+  findAll = async (): Promise<IUser[]> => {
     const users = await User.findAll();
     return users;
-  }
-  
-  public async createUser(username:string, password:string, accountId: number, t: any): Promise<IUser> {
-    const user = await User.create({ username, password, accountId },{transaction: t});
+  };
+
+  createUser = async (
+    username:string,
+    password:string,
+    accountId: number,
+    t: any,
+  ): Promise<IUser> => {
+    const user = await User.create({ username, password, accountId }, { transaction: t });
     return user;
-  }
+  };
 }

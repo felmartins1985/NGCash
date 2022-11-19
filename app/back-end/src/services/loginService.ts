@@ -1,40 +1,42 @@
-import BcryptService from './utils/BcryptService';
+import * as md5 from 'md5';
 import { ILogin } from '../interfaces/ILogin';
 import createToken from './utils/createToken';
 import UserModel from '../model/UserModel';
 import AccountModel from '../model/AccountModel';
 import sequelize from '../database/models';
-const md5 = require('md5');
+
 export default class LoginService {
-  constructor(private userModel = new UserModel(),
-  private accountModel= new AccountModel(),
+  constructor(
+    private userModel = new UserModel(),
+    private accountModel = new AccountModel(),
   ) {}
 
-  public async createUser(user: ILogin){
-    if(user.username.length<3){
-      return {code:400, message:'Username must be at least 3 characters long'}
+  static verifyPassword(password: string) {
+    const regexPassword = /^(?=.*\d)(?=.*[A-Z])[0-9a-zA-Z$*&@#]{8,}$/;
+    if (!regexPassword.test(password)) {
+      return { code: 400,
+        message: 'Password invalid' };
     }
-    const regexPassword=/^(?=.*\d)(?=.*[A-Z])[0-9a-zA-Z$*&@#]{8,}$/
-    if(!regexPassword.test(user.password)){
-      return {code:400,
-        message:'Password must contain at least one uppercase letter, one number and at least 8 characters'}
+  }
+
+  public async createUser(user: ILogin) {
+    if (user.username.length < 3) {
+      return { code: 400, message: 'Username must be at least 3 characters long' };
     }
+    LoginService.verifyPassword(user.password);
     const foundUser = await this.userModel.findOne(user.username);
-    if (foundUser) {
-      return { code: 409, message: 'USER already registered' };
-    }
+    if (foundUser) { return { code: 409, message: 'USER already registered' }; }
     const t = await sequelize.transaction();
-    try{
-      const account = await this.accountModel.createAccount(100, t);
+    try {
+      const account = await this.accountModel.createAccount(t, 100);
       await this.userModel.createUser(user.username, md5(user.password), account.id, t);
       await t.commit();
-      const token= createToken(user.username);
+      const token = createToken(user.username);
       return { code: 201, token };
-    }
-    catch (error){
+    } catch (error) {
       await t.rollback();
-      return {code: 500, message: 'Something went wrong'}
-    }    
+      return { code: 500, message: 'Something went wrong' };
+    }
   }
 
   public async login(user: ILogin) {
@@ -42,7 +44,7 @@ export default class LoginService {
     if (!foundUser) {
       return { code: 401, message: 'User not exist' };
     }
-    console.log(foundUser)
+    console.log(foundUser);
     if (foundUser.password !== md5(user.password)) {
       return { code: 401, message: 'Incorrect email or password' };
     }

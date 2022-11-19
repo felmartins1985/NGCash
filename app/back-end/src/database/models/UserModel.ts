@@ -1,50 +1,42 @@
 import { Model, INTEGER, STRING } from 'sequelize';
 import db from '.';
-import Account from './AccountModel';
-class Users extends Model {
+
+class User extends Model {
   id!: number;
   username!: string;
   password!: string;
   accountId!: number;
 }
 
-Users.init({
+User.init({
   id: {
     type: INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
     allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
   },
   username: {
-    type: STRING(100),
+    type: STRING,
     allowNull: false,
   },
   password: {
-    type: STRING(100),
+    type: STRING,
     allowNull: false,
   },
   accountId: {
     type: INTEGER,
     allowNull: false,
-    references:{
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    references: {
       model: 'accounts',
       key: 'id',
     },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  }
+  },
 }, {
   sequelize: db,
-  timestamps: false,
   modelName: 'users',
+  timestamps: false,
 });
 
-/**
-  * `Workaround` para aplicar as associations em TS:
-  * Associations 1:N devem ficar em uma das instâncias de modelo
-  * */
-
-// Users.hasOne(Account, { foreignKey: 'accountId', as: 'accounts' });
-
-
-export default Users;
+export default User;

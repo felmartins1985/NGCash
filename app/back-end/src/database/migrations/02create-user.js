@@ -2,25 +2,30 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('users', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
       },
       username: {
+        type: Sequelize.STRING,
         allowNull: false,
-        type: Sequelize.STRING(100),
       },
       password: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING,
+        allowNull: false,
       },
-      accountId:{
+      accountId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+         foreignKey: true,
         references: {
           model: 'accounts',
           key: 'id',
-        }
-      }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
     });
   },
   down: async (queryInterface) => {

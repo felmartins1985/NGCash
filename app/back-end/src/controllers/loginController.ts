@@ -26,5 +26,4 @@ export default class LoginController {
     }
     return res.status(code).json({ token });
   }
-
 }

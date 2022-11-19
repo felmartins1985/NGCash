@@ -1,38 +1,40 @@
-import { Model, INTEGER, STRING } from 'sequelize';
+import { Model, INTEGER, DECIMAL } from 'sequelize';
 import db from '.';
-import User from './UserModel';
 import Transaction from './TransactionModel';
-class Accounts extends Model {
+import User from './UserModel';
+
+class Account extends Model {
   id!: number;
   balance!: number;
 }
 
-Accounts.init({
+Account.init({
   id: {
     type: INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
     allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
   },
   balance: {
-    type: INTEGER,
-    allowNull: false
-  }
+    type: DECIMAL,
+    allowNull: false,
+  },
 }, {
+  underscored: true,
   sequelize: db,
-  timestamps: false,
   modelName: 'accounts',
+  timestamps: false,
 });
 
-/**
-  * `Workaround` para aplicar as associations em TS:
-  * Associations 1:N devem ficar em uma das instâncias de modelo
-  * */
+Account.belongsTo(User, { foreignKey: 'id', as: 'account' });
 
+Account.hasMany(Transaction, {
+  foreignKey: 'id',
+  as: 'debitedTransaction',
+});
+Account.hasMany(Transaction, {
+  foreignKey: 'id',
+  as: 'creditedTransaction',
+});
 
-Transaction.belongsTo(Accounts, { foreignKey: 'id', as: 'accounts' });
-Accounts.hasMany(Transaction, { foreignKey: 'debitedAccountId', as: 'debitedAccount' });
-Accounts.hasMany(Transaction, { foreignKey: 'creditedAccountId', as: 'creditedAccount' });
-Accounts.belongsTo(User, { foreignKey: 'id', as: 'users' });
-
-export default Accounts;
+export default Account;
