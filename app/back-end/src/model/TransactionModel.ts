@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize/types';
 import TransactionM from '../database/models/TransactionModel';
 import { ITransaction } from '../interfaces/ITransaction';
+import { Op } from "sequelize";
 
 export default class TransactionModel {
   findTransaction = async (string:string): Promise<ITransaction[] | null> => {
@@ -11,9 +12,14 @@ export default class TransactionModel {
     return transactions;
   };
 
-  findAll = async (): Promise<ITransaction[]> => {
-    const transactions = await TransactionM.findAll();
-    return transactions;
+  findTransactionsUser = async (id: number): Promise<ITransaction[] | null> => {
+    return TransactionM.findAll({ where: {
+      [Op.or]: [
+        { debitedAccountId: id },
+        { creditedAccountId: id }
+      ]
+    } },
+    );
   };
 
   createTransaction = async (

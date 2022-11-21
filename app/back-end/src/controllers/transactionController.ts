@@ -30,4 +30,10 @@ export default class LoginController {
     const transactions = await this.transactionsService.filterTransaction(params, type);
     res.status(200).json({ transactions });
   };
+  findTransactionsUser = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { code, message, transactions } = await this
+      .transactionsService.findTransactionsUser(Number(id));
+    res.status(code).json(transactions);
+  };
 }

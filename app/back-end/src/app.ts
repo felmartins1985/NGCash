@@ -1,5 +1,6 @@
 import * as express from 'express';
 import error from './middlewares/error';
+import * as cors from 'cors';
 import LoginController from './controllers/loginController';
 import AccountController from './controllers/accountController';
 import TransactionController from './controllers/transactionController';
@@ -16,13 +17,14 @@ class App {
   // public leaderController = new LeaderController();
   constructor() {
     this.app = express();
-
+    this.app.use(cors());
     this.config();
     this.routes();
     this.app.use(error);
   }
 
   routes():void {
+    this.app.get('/users', this.loginController.findAll.bind(this.loginController));
     this.app.post('/register', this.loginController.createUser
       .bind(this.loginController));
     this.app.post('/login', this.loginController.login.bind(this.loginController));
@@ -36,6 +38,11 @@ class App {
       auth,
       this.transactionController.createTransaction.bind(this.transactionController),
     );
+    this.app.get(
+          '/transaction/:id',
+          auth,
+          this.transactionController.findTransactionsUser.bind(this.transactionController),
+    )
     this.app.get(
       '/transaction/filter',
       auth,
