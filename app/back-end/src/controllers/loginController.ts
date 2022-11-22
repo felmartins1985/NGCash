@@ -26,8 +26,9 @@ export default class LoginController {
     }
     return res.status(code).json({ data });
   }
+
   public async findAll(_req: Request, res: Response) {
     const { code, data } = await this.service.findAll();
     res.status(code).json(data);
-  };
+  }
 }

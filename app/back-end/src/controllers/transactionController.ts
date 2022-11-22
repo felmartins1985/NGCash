@@ -26,13 +26,13 @@ export default class LoginController {
 
   filterTransaction = async (req: Request, res: Response, _next: NextFunction) => {
     const { params, type } = req.query as unknown as filterTransaction;
-    console.log(params, type);
     const transactions = await this.transactionsService.filterTransaction(params, type);
-    res.status(200).json({ transactions });
+    res.status(200).json(transactions );
   };
+
   findTransactionsUser = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { code, message, transactions } = await this
+    const { code, transactions } = await this
       .transactionsService.findTransactionsUser(Number(id));
     res.status(code).json(transactions);
   };

@@ -20,6 +20,7 @@ export default class TransactionService {
     if (!userDeb || !userCre) return { code: 401, message: 'User not exists' };
     return { userCre, userDeb };
   };
+
   verifyBalance = async (userCredited: IUser, userDebited: IUser, value: number): Promise<any> => {
     const balanceDebited = await this.accountModel.findOneAccount(userDebited.accountId);
     const balanceCredited = await this.accountModel.findOneAccount(userCredited.accountId);
@@ -43,7 +44,8 @@ export default class TransactionService {
     try {
       await this.accountModel.newBalance(getUser.userCre.id, getBalance.newBalanceCredited, t);
       await this.accountModel.newBalance(getUser.userDeb.id, getBalance.newBalanceDebited, t);
-      await this.transactionModel.createTransaction(getUser.userCre.id, getUser.userDeb.id, value, t);
+      await this.transactionModel
+        .createTransaction(getUser.userCre.id, getUser.userDeb.id, value, t);
       await t.commit();
       return { code: 200, message: 'Transaction created' };
     } catch (error) {
@@ -52,13 +54,17 @@ export default class TransactionService {
     }
   };
 
-  findTransactionsUser = async (id: number): Promise<any> => {  
+  public async findTransactionsUser(id: number) {
     const transactions = await this.transactionModel.findTransactionsUser(id);
     if (!transactions) return { code: 404, message: 'Transactions not found' };
-       return { code: 200, message: 'Transaction found', transactions };
-  };
+    return { code: 200, message: 'Transaction found', transactions };
+  }
+
   public async filterTransaction(params: string, type: string) {
     const filter = await this.transactionModel.filterTransaction(params, type);
+
+    if (!filter) return { code: 404, message: 'Transactions not found' };
+    
     return filter;
   }
 }

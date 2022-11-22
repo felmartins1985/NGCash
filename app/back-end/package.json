@@ -8,7 +8,7 @@
     "test": "mocha -r ts-node/register ./src/tests/*$NAME*.{test,spec}.ts -t 10000 --exit",
     "db:reset": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "prestart": "npm run build && npm run db:reset",
-    "start": "node .",
+    "start": "npm run build && node .",
     "predev": "npm run build && npm run db:reset",
     "dev": "nodemon --watch \"./src/**\" ./src/server.ts",
     "dev:tsnd": "tsnd src/server.ts",
@@ -63,6 +63,8 @@
     "jsonwebtoken": "8.5.1",
     "md5": "^2.3.0",
     "mysql2": "2.3.3",
+    "pg": "^8.8.0",
+    "pg-hstore": "^2.3.4",
     "sequelize": "6.9.0"
   }
 }

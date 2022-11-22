@@ -1,54 +1,22 @@
 import * as express from 'express';
-import error from './middlewares/error';
 import * as cors from 'cors';
-import LoginController from './controllers/loginController';
-import AccountController from './controllers/accountController';
-import TransactionController from './controllers/transactionController';
-
-import auth from './middlewares/auth';
+import error from './middlewares/error';
+import LoginRouter from './routes/LoginRoute';
+import AccountsRouter from './routes/AccountRoute';
+import TransactionsRouter from './routes/TransactionRoute';
 
 class App {
   public app: express.Express;
-  public loginController = new LoginController();
-  public accountController = new AccountController();
-  public transactionController = new TransactionController();
 
-  // public matchController = new MatchController();
-  // public leaderController = new LeaderController();
   constructor() {
     this.app = express();
     this.app.use(cors());
     this.config();
-    this.routes();
-    this.app.use(error);
-  }
 
-  routes():void {
-    this.app.get('/users', this.loginController.findAll.bind(this.loginController));
-    this.app.post('/register', this.loginController.createUser
-      .bind(this.loginController));
-    this.app.post('/login', this.loginController.login.bind(this.loginController));
-    this.app.get(
-      '/account/:id',
-      auth,
-      this.accountController.findOneAccount.bind(this.accountController),
-    );
-    this.app.post(
-      '/transaction',
-      auth,
-      this.transactionController.createTransaction.bind(this.transactionController),
-    );
-    this.app.get(
-          '/transaction/:id',
-          auth,
-          this.transactionController.findTransactionsUser.bind(this.transactionController),
-    )
-    this.app.get(
-      '/transaction/filter',
-      auth,
-      this.transactionController.filterTransaction.bind(this.transactionController),
-    );
-  // http://localhost:3001/transaction/filter?params=2&type=debitedAccountId
+    this.app.use(LoginRouter);
+    this.app.use('/account', AccountsRouter);
+    this.app.use('/transaction', TransactionsRouter);
+    this.app.use(error);
   }
 
   private config():void {

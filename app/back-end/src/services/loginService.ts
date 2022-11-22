@@ -60,10 +60,12 @@ export default class LoginService {
     };
     return { code: 200, data: allInformations };
   }
+
   public async findAll() {
     const users = await this.userModel.findAll();
     if (!users) return { code: 404, message: 'Users not found' };
     return { code: 200, data: users };
-  };
+  }
+
   public async findUser(username: string) { return this.userModel.findOne(username); }
 }

@@ -71,9 +71,27 @@ export const requestGetUsers = async () => {
   try {
     const URL = 'http://localhost:3001/users';
     const response = await axios.get(URL);
-    console.log(response.data);
     return response.data;
   } catch (error: any) {
+    return error.response;
+  }
+};
+
+export const requestFilterTransactions = async (params: string, type: string, token: string) => {
+  
+  const query = `params=${params}&type=${type}`; 
+  try { 
+    const URL = `http://localhost:3001/transaction/filter?${query}`;
+    const response = await axios.get(
+      URL,
+      {
+      headers: {
+        Authorization: token,
+      }
+    },
+    );    
+    return response.data;
+  } catch (error: any) {  
     return error.response;
   }
 };
