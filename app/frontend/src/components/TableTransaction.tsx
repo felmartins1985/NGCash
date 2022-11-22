@@ -2,7 +2,6 @@ import React, { useEffect, useContext, useState } from 'react';
 import { requestGetAllTransactions, requestGetUsers, requestFilterTransactions } from '../services/request';
 import NgContext, { ContextInterface } from '../context/ngContext';
 import newMoment from '../services/moment';
-import moment from 'moment';
 
 function TableTransactions() {
   const { transactions, setTransactions } = useContext(NgContext) as ContextInterface;
@@ -48,6 +47,7 @@ function TableTransactions() {
   
   return (
     <div>
+      
    <label htmlFor="cash">Selecione</label>
       <select name="cash" id="cash" onChange={handleChange}>
         <option value="createdAt">Todas</option>
@@ -76,6 +76,7 @@ function TableTransactions() {
           </tr>
         )))}
       </tbody>
+      
     </table>
     </div>
   );
