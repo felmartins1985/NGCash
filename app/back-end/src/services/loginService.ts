@@ -20,7 +20,7 @@ export default class LoginService {
     return true;
   }
 
-  public async createUser({ username, password }: ILogin) {
+  public async createUser({ username, password }: ILogin): Promise<any> {
     if (username.length < 3) return errorUsername;
     const verifyPassword = LoginService.verifyPassword(password);
     if (verifyPassword !== true) { return { code: 400, message: 'Password invalid' }; }

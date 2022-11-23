@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize/types';
 import User from '../database/models/UserModel';
 import { IUser } from '../interfaces/IUser';
 
@@ -22,7 +23,7 @@ export default class UserModel implements IUserModel {
     username:string,
     password:string,
     accountId: number,
-    t: any,
+    t: Transaction,
   ): Promise<IUser> => {
     const user = await User.create({ username, password, accountId }, { transaction: t });
     return user;

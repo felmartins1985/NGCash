@@ -3,7 +3,7 @@ import Account from '../database/models/AccountModel';
 import { IAccount } from '../interfaces/IAccount';
 
 export default class AccountModel {
-  createAccount = async (t: any, balance = 100): Promise<IAccount> => {
+  createAccount = async (t: Transaction, balance = 100): Promise<IAccount> => {
     const account = await Account.create({ balance }, { transaction: t });
     return account;
   };
