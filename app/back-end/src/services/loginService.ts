@@ -5,6 +5,7 @@ import UserModel from '../model/UserModel';
 import AccountModel from '../model/AccountModel';
 import sequelize from '../database/models';
 
+const errorUsername = { code: 400, message: 'Username must be at least 3 characters long' };
 export default class LoginService {
   constructor(
     private userModel = new UserModel(),
@@ -19,22 +20,19 @@ export default class LoginService {
     return true;
   }
 
-  public async createUser(user: ILogin) {
-    if (user.username.length < 3) {
-      return { code: 400, message: 'Username must be at least 3 characters long' };
-    }
-    const verifyPassword = LoginService.verifyPassword(user.password);
+  public async createUser({ username, password }: ILogin) {
+    if (username.length < 3) return errorUsername;
+    const verifyPassword = LoginService.verifyPassword(password);
     if (verifyPassword !== true) { return { code: 400, message: 'Password invalid' }; }
-    const foundUser = await this.userModel.findOne(user.username);
+    const foundUser = await this.userModel.findOne(username);
     if (foundUser) { return { code: 409, message: 'USER already registered' }; }
     const t = await sequelize.transaction();
     try {
       const account = await this.accountModel.createAccount(t, 100);
-      const newUser = await this.userModel.createUser(user.username, md5(user.password), account.id, t);
+      const newUser = await this.userModel.createUser(username, md5(password), account.id, t);
       await t.commit();
-      const token = createToken(user.username);
       const allInformations = {
-        id: newUser.id, username: newUser.username, token, account: newUser.accountId,
+        id: newUser.id, username, token: createToken(username), account: newUser.accountId,
       };
       return { code: 200, data: allInformations };
     } catch (error) {

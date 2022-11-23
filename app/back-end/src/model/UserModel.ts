@@ -17,7 +17,6 @@ export default class UserModel implements IUserModel {
     const users = await User.findAll();
     return users;
   };
-  
 
   createUser = async (
     username:string,

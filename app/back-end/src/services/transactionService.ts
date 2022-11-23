@@ -64,7 +64,7 @@ export default class TransactionService {
     const filter = await this.transactionModel.filterTransaction(params, type);
 
     if (!filter) return { code: 404, message: 'Transactions not found' };
-    
+
     return filter;
   }
 }
